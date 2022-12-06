@@ -1,0 +1,14 @@
+{
+    "name": "Open3D",
+    "path_dataset": "/home/wt/open3d_data/extract/mynewdataset",
+    "path_intrinsic": "",
+    "depth_max": 3.0,
+    "voxel_size": 0.05,
+    "depth_diff_max": 0.07,
+    "preference_loop_closure_odometry": 0.1,
+    "preference_loop_closure_registration": 5.0,
+    "tsdf_cubic_size": 3.0,
+    "icp_method": "color",
+    "global_registration": "ransac",
+    "python_multi_threading": true
+}
