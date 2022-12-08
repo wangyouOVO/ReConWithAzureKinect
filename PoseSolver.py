@@ -35,9 +35,6 @@ class PoseSolver:
         self.startIdx = 0
         self.endIdx = config["device_num"]
         self.pose_graph = o3d.pipelines.registration.PoseGraph()
-        
-    def getRGBDList(self,RGBDList):
-        self.RGBDList = RGBDList
     
     def getIntrinsic(self):
         if self.config["path_intrinsic"]:
@@ -106,4 +103,11 @@ class PoseSolver:
         pose_graph_optimized_name = os.path.dirname(os.path.abspath(__file__))+"/config/optimized_pose_graph.json"
         o3d.io.write_pose_graph(pose_graph_optimized_name, self.pose_graph)
         o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Error)
+        
     
+    def getPosegraph(self,RGBDList):
+        self.RGBDList = RGBDList
+        self.getIntrinsic()
+        self.makePosegraph()
+        self.optimizePosegraph()
+        return self.pose_graph

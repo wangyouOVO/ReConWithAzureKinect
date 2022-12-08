@@ -41,8 +41,7 @@ def getConfig():
 
 if __name__ == "__main__":
     config = getConfig()
-    if config["device_num"] == 1:
-        system = ReConSystem(config=config,mode = 1)
-    else:
-        system = ReConSystem(config=config,mode = 0)
+    if config["device_num"]
+    system = ReConSystem(config=config)
+    recoder = RecorderOneRGBDWithCallback()
     

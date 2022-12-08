@@ -7,23 +7,17 @@ import numpy as np
 import open3d as o3d
 
 class MeshCreator:
-    def __init__(self,config) -> None:
+    def __init__(self,config,poseGraph) -> None:
         self.config = config
-    
-    
-    def getIntrinsic(self):
         if self.config["path_intrinsic"]:
             self.intrinsic = o3d.io.read_pinhole_camera_intrinsic(
             self.config["path_intrinsic"])
         else:
             self.intrinsic = o3d.camera.PinholeCameraIntrinsic(
             o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
+        self.poseGraph = poseGraph     
     
-    def getPoseGraph(self,pose_graph):
-        self.poseGraph = pose_graph
-        
-    
-    def integrate_rgb_frames_for_fragment(self, RGBDList):
+    def integrateRgbdFrames(self, RGBDList):
         volume = o3d.pipelines.integration.ScalableTSDFVolume(
             voxel_length=self.config["tsdf_cubic_size"] / 512.0,
             sdf_trunc=0.04,
@@ -36,3 +30,5 @@ class MeshCreator:
             volume.integrate(rgbd, self.intrinsic, np.linalg.inv(pose))
         mesh = volume.extract_triangle_mesh()
         return mesh
+
+    
