@@ -9,12 +9,12 @@ import datetime
 import os, sys
 from os.path import isfile
 
-import open3d as o3d
 
-# from open3d_example import check_folder_structure
+import open3d as o3d
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from InitializeConfig import initialize_config
+from ReConSystem import ReConSystem
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reconstruction system")
@@ -28,11 +28,11 @@ if __name__ == "__main__":
         with open(args.config) as json_file:
             config = json.load(json_file)
             initialize_config(config)
-            # check_folder_structure(config['path_dataset'])
     else:
-        print("Please input'--config [your config path]' and try again!")
-        sys.exit()
-
+        defaultConfigPath = os.path.dirname(os.path.abspath(__file__)) + "/config/launchconfig.json"
+        with open(defaultConfigPath) as json_file:
+            config = json.load(json_file)
+            initialize_config(config)
     assert config is not None
 
     print("====================================")
@@ -40,5 +40,6 @@ if __name__ == "__main__":
     print("====================================")
     for key, val in config.items():
         print("%40s : %s" % (key, str(val)))
-
-    sys.stdout.flush()
+    
+    system = ReConSystem(config=config)
+    

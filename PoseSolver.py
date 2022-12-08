@@ -3,15 +3,11 @@
 # ---------------------------------------------------------
 
 
-import math
 import os, sys
 import numpy as np
 import open3d as o3d
-import cv2
 from open3d_example import *
 from opencv_pose_estimation import pose_estimation
-# sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from optimize_posegraph import optimize_posegraph_for_fragment
 
 def register_one_rgbd_pair(s, t, intrinsic,RGBDList, config):
     source_rgbd_image = RGBDList[s]
