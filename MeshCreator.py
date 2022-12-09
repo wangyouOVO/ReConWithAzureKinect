@@ -5,6 +5,7 @@
 
 import numpy as np
 import open3d as o3d
+# import sys
 
 class MeshCreator:
     def __init__(self,config,poseGraph) -> None:
@@ -25,10 +26,25 @@ class MeshCreator:
         for i in range(len(self.poseGraph.nodes)):
             print("integrate rgbd frame %d (%d of %d)." %
                 (i, i + 1, len(self.poseGraph.nodes)))
-            rgbd = RGBDList[i]
+            # rgbd = RGBDList[i]
+            rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
+                RGBDList[i].color,
+                RGBDList[i].depth,
+                depth_scale=self.config["depth_scale"],
+                depth_trunc=self.config["depth_max"],
+                convert_rgb_to_intensity=False)
+            print("=============")
+            print(rgbd_image)
+            # print("--------------")
+            # print(rgbd_image)
+            print("=============")
+
             pose = self.poseGraph.nodes[i].pose
-            volume.integrate(rgbd, self.intrinsic, np.linalg.inv(pose))
+            print(pose)
+            volume.integrate(rgbd_image, self.intrinsic, np.linalg.inv(pose))
+        # sys.exit()
         mesh = volume.extract_triangle_mesh()
+        # mesh.compute_vertex_normals()
         return mesh
 
     

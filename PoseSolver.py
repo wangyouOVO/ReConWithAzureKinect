@@ -10,13 +10,26 @@ from open3d_example import *
 from opencv_pose_estimation import pose_estimation
 
 def register_one_rgbd_pair(s, t, intrinsic,RGBDList, config):
-    source_rgbd_image = RGBDList[s]
-    target_rgbd_image = RGBDList[t]
+    source_rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
+        RGBDList[s].color,
+        RGBDList[s].depth,
+        depth_scale=config["depth_scale"],
+        depth_trunc=config["depth_max"],
+        convert_rgb_to_intensity=True)
+    
+    target_rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
+        RGBDList[t].color,
+        RGBDList[t].depth,
+        depth_scale=config["depth_scale"],
+        depth_trunc=config["depth_max"],
+        convert_rgb_to_intensity=True)
     option = o3d.pipelines.odometry.OdometryOption()
     option.depth_diff_max = config["depth_diff_max"]
     success_5pt, odo_init = pose_estimation(source_rgbd_image,
                                                     target_rgbd_image,
                                                     intrinsic, False)
+    print(odo_init)
+    # sys.exit()
     if success_5pt:
         print(" matching between frame : %d and %d successfully!"  % ( s, t))
         [success, trans, info
@@ -32,8 +45,7 @@ def register_one_rgbd_pair(s, t, intrinsic,RGBDList, config):
 class PoseSolver:
     def __init__(self,config) -> None:
         self.config = config
-        self.startIdx = 0
-        self.endIdx = config["device_num"]
+        self.startIdx = 0 
         self.pose_graph = o3d.pipelines.registration.PoseGraph()
     
     def getIntrinsic(self):
@@ -56,6 +68,7 @@ class PoseSolver:
                     [success, trans,info] = register_one_rgbd_pair(s, t, self.intrinsic, 
                                                             self.RGBDList, self.config)
                     if not success:
+                        print("register failed")
                         sys.exit()
                     trans_odometry = np.dot(trans, trans_odometry)
                     trans_odometry_inv = np.linalg.inv(trans_odometry)
@@ -68,23 +81,17 @@ class PoseSolver:
                                                                 trans,
                                                                 info,
                                                                 uncertain=False))
-                if s == 0 and t == self.endIdx:
+                if s == 0 and t == self.endIdx - 1:
                     print(" matching between frame : %d and %d" % ( s, t))
                     [success, trans,info] = register_one_rgbd_pair(s, t, self.intrinsic, 
                                                             self.RGBDList, self.config)
-                    if not success:
-                        sys.exit()
-                    trans_odometry = np.dot(trans, trans_odometry)
-                    trans_odometry_inv = np.linalg.inv(trans_odometry)
-                    self.pose_graph.nodes.append(
-                        o3d.pipelines.registration.PoseGraphNode(
-                            trans_odometry_inv))
-                    self.pose_graph.edges.append(
-                        o3d.pipelines.registration.PoseGraphEdge(s,
-                                                                t,
-                                                                trans,
-                                                                info,
-                                                                uncertain=True))
+                    if  success:
+                        self.pose_graph.edges.append(
+                            o3d.pipelines.registration.PoseGraphEdge(s,
+                                                                    t,
+                                                                    trans,
+                                                                    info,
+                                                                    uncertain=True))
         
     def optimizePosegraph(self):
         # to display messages from o3d.pipelines.registration.global_optimization
@@ -107,6 +114,8 @@ class PoseSolver:
     
     def getPosegraph(self,RGBDList):
         self.RGBDList = RGBDList
+        self.endIdx = len(RGBDList)
+        print(self.endIdx)
         self.getIntrinsic()
         self.makePosegraph()
         self.optimizePosegraph()

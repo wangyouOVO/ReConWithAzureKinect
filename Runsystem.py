@@ -43,6 +43,7 @@ if __name__ == "__main__":
     config = getConfig()
     if config["device_num"] == 1:
         system = ReConSystem(config=config,mode = 1)
+        system.run()
     else:
         system = ReConSystem(config=config,mode = 0)
     

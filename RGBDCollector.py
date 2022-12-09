@@ -34,7 +34,9 @@ class RecorderOneRGBDWithCallback:
         # Global flags
         self.flag_exit = False
         self.align_depth_to_color = align_depth_to_color
-        self.sensor = o3d.io.AzureKinectSensor(config = o3d.io.AzureKinectSensorConfig())
+        AzureKinectConfig = o3d.io.AzureKinectSensorConfig()
+        print(AzureKinectConfig)
+        self.sensor = o3d.io.AzureKinectSensor(AzureKinectConfig)
         self.sensor.connect(device)
         self.idx = 0
         self.RGBDList = []
@@ -48,13 +50,14 @@ class RecorderOneRGBDWithCallback:
             make_clean_folder(dataPath)
         rgbdImage = self.sensor.capture_frame(True)
         self.RGBDList.append(rgbdImage)
+        print("get RGBD Image %d"% self.idx)
         print(rgbdImage)
-        color_filename = dataPath + '/color/{0:05d}.jpg'.format(self.idx)
-        print('Writing to {}'.format(color_filename))
-        o3d.io.write_image(color_filename, rgbdImage.color)
-        depth_filename = dataPath + '/depth/{0:05d}.png'.format(self.idx)
-        print('Writing to {}'.format(depth_filename))
-        o3d.io.write_image(depth_filename, rgbdImage.depth)
+        # color_filename = dataPath + '/color/{0:05d}.jpg'.format(self.idx)
+        # print('Writing to {}'.format(color_filename))
+        # o3d.io.write_image(color_filename, rgbdImage.color)
+        # depth_filename = dataPath + '/depth/{0:05d}.png'.format(self.idx)
+        # print('Writing to {}'.format(depth_filename))
+        # o3d.io.write_image(depth_filename, rgbdImage.depth)
         self.idx += 1
         return False
 
@@ -82,4 +85,6 @@ class RecorderOneRGBDWithCallback:
             vis.update_geometry(rgbd)
             vis.poll_events()
             vis.update_renderer()
+        print("get RGBDList :")
+        print(self.RGBDList)
         return self.RGBDList
