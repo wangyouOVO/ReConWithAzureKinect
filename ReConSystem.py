@@ -6,7 +6,13 @@ from PoseSolver import PoseSolver
 from MeshCreator import MeshCreator
 from open3d import visualization
 import open3d as o3d
+import time
+import os
+from RGBDCollector import make_clean_folder
 from RGBDCollector import RecorderOneRGBDWithCallback
+import cv2
+from RGBDdataLoader import get_rgbd_file_lists
+
 class ReConSystem:
     def __init__(self,config,mode) -> None:
         self.mode = mode
@@ -15,12 +21,13 @@ class ReConSystem:
     def run(self):
         if self.mode == 1:
             self.recorder = RecorderOneRGBDWithCallback()
-            RGBDList = self.recorder.run()
-            poseGraph = self.poseSolver.getPosegraph(RGBDList)
+            self.recorder.run()
+            color_files, depth_files = get_rgbd_file_lists()
+            poseGraph = self.poseSolver.getPosegraph(color_files, depth_files)
             for i in range(len(poseGraph.nodes)):
                 print(poseGraph.nodes[i].pose)
             self.meshCreater = MeshCreator(self.config,poseGraph=poseGraph)
-            meshModel = self.meshCreater.integrateRgbdFrames(RGBDList)
+            meshModel = self.meshCreater.integrateRgbdFrames(color_files, depth_files)
             ply_name = "/home/wt/Projects/ReConWithAzureKinect/recorder_dataset/fragmentmesh.ply"
             o3d.io.write_triangle_mesh(ply_name,meshModel)
             vis = visualization.Visualizer()

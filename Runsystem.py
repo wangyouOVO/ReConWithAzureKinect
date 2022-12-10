@@ -4,12 +4,7 @@
 
 import json
 import argparse
-import time
-import datetime
-import os, sys
-from os.path import isfile
-from RGBDCollector import RecorderOneRGBDWithCallback
-import open3d as o3d
+import os
 from InitializeConfig import initialize_config
 from ReConSystem import ReConSystem
 

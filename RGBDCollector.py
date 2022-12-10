@@ -45,19 +45,20 @@ class RecorderOneRGBDWithCallback:
         self.flag_exit = True
 
     def space_callback(self, vis):
-        dataPath = os.path.dirname(os.path.abspath(__file__)) + "/recorder_dataset"
+        dataColorPath = os.path.dirname(os.path.abspath(__file__)) + "/recorder_dataset/color/"
+        dataDepthPath = os.path.dirname(os.path.abspath(__file__)) + "/recorder_dataset/depth/"
         if(self.idx == 0):
-            make_clean_folder(dataPath)
+            make_clean_folder(dataColorPath)
+            make_clean_folder(dataDepthPath)
         rgbdImage = self.sensor.capture_frame(True)
         self.RGBDList.append(rgbdImage)
         print("get RGBD Image %d"% self.idx)
-        print(rgbdImage)
-        # color_filename = dataPath + '/color/{0:05d}.jpg'.format(self.idx)
-        # print('Writing to {}'.format(color_filename))
-        # o3d.io.write_image(color_filename, rgbdImage.color)
-        # depth_filename = dataPath + '/depth/{0:05d}.png'.format(self.idx)
-        # print('Writing to {}'.format(depth_filename))
-        # o3d.io.write_image(depth_filename, rgbdImage.depth)
+        color_filename = dataColorPath + '{0:05d}.jpg'.format(self.idx)
+        print('Writing to {}'.format(color_filename))
+        o3d.io.write_image(color_filename, rgbdImage.color)
+        depth_filename = dataDepthPath + '{0:05d}.png'.format(self.idx)
+        print('Writing to {}'.format(depth_filename))
+        o3d.io.write_image(depth_filename, rgbdImage.depth)
         self.idx += 1
         return False
 
@@ -85,6 +86,4 @@ class RecorderOneRGBDWithCallback:
             vis.update_geometry(rgbd)
             vis.poll_events()
             vis.update_renderer()
-        print("get RGBDList :")
-        print(self.RGBDList)
-        return self.RGBDList
+        self.sensor.disconnect()

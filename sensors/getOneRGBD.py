@@ -21,12 +21,12 @@ class RecorderOneRGBDWithCallback:
     def space_callback(self, vis):
         rgbdImage = self.sensor.capture_frame(True)
         print(rgbdImage)
-        color_filename = '/home/wt/Projects/ReConWithAzureKinect/recorder_dataset/CapOnebyone/color/{0:05d}.jpg'.format(
+        color_filename = '/home/wt/Projects/ReConWithAzureKinect/recorder_dataset/color/{0:05d}.jpg'.format(
                         self.idx)
         print('Writing to {}'.format(color_filename))
         o3d.io.write_image(color_filename, rgbdImage.color)
 
-        depth_filename = '/home/wt/Projects/ReConWithAzureKinect/recorder_dataset/CapOnebyone/depth/{0:05d}.png'.format(
+        depth_filename = '/home/wt/Projects/ReConWithAzureKinect/recorder_dataset/depth/{0:05d}.png'.format(
             self.idx)
         print('Writing to {}'.format(depth_filename))
         o3d.io.write_image(depth_filename, rgbdImage.depth)

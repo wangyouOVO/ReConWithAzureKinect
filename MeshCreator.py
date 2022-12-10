@@ -5,7 +5,7 @@
 
 import numpy as np
 import open3d as o3d
-# import sys
+from RGBDdataLoader import read_rgbd_image
 
 class MeshCreator:
     def __init__(self,config,poseGraph) -> None:
@@ -18,7 +18,7 @@ class MeshCreator:
             o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
         self.poseGraph = poseGraph     
     
-    def integrateRgbdFrames(self, RGBDList):
+    def integrateRgbdFrames(self, colorFiles, depthFiles):
         volume = o3d.pipelines.integration.ScalableTSDFVolume(
             voxel_length=self.config["tsdf_cubic_size"] / 512.0,
             sdf_trunc=0.04,
@@ -26,25 +26,14 @@ class MeshCreator:
         for i in range(len(self.poseGraph.nodes)):
             print("integrate rgbd frame %d (%d of %d)." %
                 (i, i + 1, len(self.poseGraph.nodes)))
-            # rgbd = RGBDList[i]
-            rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
-                RGBDList[i].color,
-                RGBDList[i].depth,
-                depth_scale=self.config["depth_scale"],
-                depth_trunc=self.config["depth_max"],
-                convert_rgb_to_intensity=False)
+            rgbd_image = read_rgbd_image(colorFiles[i],depthFiles[i],False,self.config)
             print("=============")
             print(rgbd_image)
-            # print("--------------")
-            # print(rgbd_image)
             print("=============")
-
             pose = self.poseGraph.nodes[i].pose
             print(pose)
             volume.integrate(rgbd_image, self.intrinsic, np.linalg.inv(pose))
-        # sys.exit()
         mesh = volume.extract_triangle_mesh()
-        # mesh.compute_vertex_normals()
         return mesh
 
     

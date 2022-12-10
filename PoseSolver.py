@@ -8,21 +8,13 @@ import numpy as np
 import open3d as o3d
 from open3d_example import *
 from opencv_pose_estimation import pose_estimation
+from RGBDdataLoader import read_rgbd_image
 
-def register_one_rgbd_pair(s, t, intrinsic,RGBDList, config):
-    source_rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
-        RGBDList[s].color,
-        RGBDList[s].depth,
-        depth_scale=config["depth_scale"],
-        depth_trunc=config["depth_max"],
-        convert_rgb_to_intensity=True)
-    
-    target_rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
-        RGBDList[t].color,
-        RGBDList[t].depth,
-        depth_scale=config["depth_scale"],
-        depth_trunc=config["depth_max"],
-        convert_rgb_to_intensity=True)
+def register_one_rgbd_pair(s, t, intrinsic,colorFiles,depthFiles,config):
+    ####################
+    source_rgbd_image = read_rgbd_image(colorFiles[s],depthFiles[s],True,config)
+    target_rgbd_image = read_rgbd_image(colorFiles[t],depthFiles[t],True,config)
+    ####################
     option = o3d.pipelines.odometry.OdometryOption()
     option.depth_diff_max = config["depth_diff_max"]
     success_5pt, odo_init = pose_estimation(source_rgbd_image,
@@ -66,7 +58,7 @@ class PoseSolver:
                 if t == s + 1:
                     print(" matching between frame : %d and %d" % ( s, t))
                     [success, trans,info] = register_one_rgbd_pair(s, t, self.intrinsic, 
-                                                            self.RGBDList, self.config)
+                                            self.RGBDList["color"],self.RGBDList["depth"], self.config)
                     if not success:
                         print("register failed")
                         sys.exit()
@@ -84,7 +76,7 @@ class PoseSolver:
                 if s == 0 and t == self.endIdx - 1:
                     print(" matching between frame : %d and %d" % ( s, t))
                     [success, trans,info] = register_one_rgbd_pair(s, t, self.intrinsic, 
-                                                            self.RGBDList, self.config)
+                                                            self.RGBDList["color"],self.RGBDList["depth"], self.config)
                     if  success:
                         self.pose_graph.edges.append(
                             o3d.pipelines.registration.PoseGraphEdge(s,
@@ -104,7 +96,6 @@ class PoseSolver:
             edge_prune_threshold=0.25,
             preference_loop_closure=self.config["preference_loop_closure"],
             reference_node=0)
-        # pose_graph = o3d.io.read_pose_graph(pose_graph_name)
         o3d.pipelines.registration.global_optimization(self.pose_graph, method, criteria,
                                                     option)
         pose_graph_optimized_name = os.path.dirname(os.path.abspath(__file__))+"/config/optimized_pose_graph.json"
@@ -112,9 +103,9 @@ class PoseSolver:
         o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Error)
         
     
-    def getPosegraph(self,RGBDList):
-        self.RGBDList = RGBDList
-        self.endIdx = len(RGBDList)
+    def getPosegraph(self,colorFiles,depthFiles):
+        self.RGBDList = {"color":colorFiles,"depth":depthFiles}
+        self.endIdx = len(colorFiles)
         print(self.endIdx)
         self.getIntrinsic()
         self.makePosegraph()
