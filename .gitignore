@@ -1,3 +1,5 @@
-recorder_dataset/
+recorder_dataset/color/*
+recorder_dataset/depth/*
+recorder_dataset/fragmentmesh.ply
 testforpro
 __pycache__/
