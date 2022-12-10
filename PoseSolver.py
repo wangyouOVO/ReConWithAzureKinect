@@ -6,22 +6,18 @@
 import os, sys
 import numpy as np
 import open3d as o3d
-from open3d_example import *
 from opencv_pose_estimation import pose_estimation
 from RGBDdataLoader import read_rgbd_image
 
 def register_one_rgbd_pair(s, t, intrinsic,colorFiles,depthFiles,config):
-    ####################
     source_rgbd_image = read_rgbd_image(colorFiles[s],depthFiles[s],True,config)
     target_rgbd_image = read_rgbd_image(colorFiles[t],depthFiles[t],True,config)
-    ####################
     option = o3d.pipelines.odometry.OdometryOption()
     option.depth_diff_max = config["depth_diff_max"]
     success_5pt, odo_init = pose_estimation(source_rgbd_image,
                                                     target_rgbd_image,
                                                     intrinsic, False)
     print(odo_init)
-    # sys.exit()
     if success_5pt:
         print(" matching between frame : %d and %d successfully!"  % ( s, t))
         [success, trans, info
@@ -86,7 +82,6 @@ class PoseSolver:
                                                                     uncertain=True))
         
     def optimizePosegraph(self):
-        # to display messages from o3d.pipelines.registration.global_optimization
         o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Debug)
         method = o3d.pipelines.registration.GlobalOptimizationLevenbergMarquardt()
         criteria = o3d.pipelines.registration.GlobalOptimizationConvergenceCriteria(

@@ -6,11 +6,7 @@ from PoseSolver import PoseSolver
 from MeshCreator import MeshCreator
 from open3d import visualization
 import open3d as o3d
-import time
-import os
-from RGBDCollector import make_clean_folder
 from RGBDCollector import RecorderOneRGBDWithCallback
-import cv2
 from RGBDdataLoader import get_rgbd_file_lists
 
 class ReConSystem:

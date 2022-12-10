@@ -2,14 +2,6 @@
 #Author: Wentao , Shanghai University, 2022
 # ---------------------------------------------------------
 
-import open3d as o3d
-
-import os
-import sys
-import json
-from os.path import isfile, join, splitext, dirname, basename
-from warnings import warn
-
 def set_default_value(config, key, value):
     if key not in config:
         config[key] = value
