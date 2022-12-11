@@ -2,7 +2,7 @@
 #Author: Wentao , Shanghai University, 2022
 # ---------------------------------------------------------
 
-
+import os
 import numpy as np
 import open3d as o3d
 from RGBDdataLoader import read_rgbd_image
@@ -10,12 +10,9 @@ from RGBDdataLoader import read_rgbd_image
 class MeshCreator:
     def __init__(self,config,poseGraph) -> None:
         self.config = config
-        if self.config["path_intrinsic"]:
-            self.intrinsic = o3d.io.read_pinhole_camera_intrinsic(
-            self.config["path_intrinsic"])
-        else:
-            self.intrinsic = o3d.camera.PinholeCameraIntrinsic(
-            o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
+        path_intrinsic = os.path.dirname(os.path.abspath(__file__)) + "/config/instrinsic.json"
+        self.intrinsic = o3d.io.read_pinhole_camera_intrinsic(
+        path_intrinsic)
         self.poseGraph = poseGraph     
     
     def integrateRgbdFrames(self, colorFiles, depthFiles):

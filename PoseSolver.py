@@ -37,12 +37,10 @@ class PoseSolver:
         self.pose_graph = o3d.pipelines.registration.PoseGraph()
     
     def getIntrinsic(self):
-        if self.config["path_intrinsic"]:
-            self.intrinsic = o3d.io.read_pinhole_camera_intrinsic(
-            self.config["path_intrinsic"])
-        else:
-            self.intrinsic = o3d.camera.PinholeCameraIntrinsic(
-            o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault)
+        path_intrinsic = os.path.dirname(os.path.abspath(__file__)) + "/config/instrinsic.json"
+        self.intrinsic = o3d.io.read_pinhole_camera_intrinsic(
+        path_intrinsic)
+        
     
     def makePosegraph(self):
         o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Error)

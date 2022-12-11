@@ -8,6 +8,7 @@ from open3d import visualization
 import open3d as o3d
 from RGBDCollector import RecorderOneRGBDWithCallback
 from RGBDdataLoader import get_rgbd_file_lists
+import os
 
 class ReConSystem:
     def __init__(self,config,mode) -> None:
@@ -24,7 +25,7 @@ class ReConSystem:
                 print(poseGraph.nodes[i].pose)
             self.meshCreater = MeshCreator(self.config,poseGraph=poseGraph)
             meshModel = self.meshCreater.integrateRgbdFrames(color_files, depth_files)
-            ply_name = "/home/wt/Projects/ReConWithAzureKinect/recorder_dataset/fragmentmesh.ply"
+            ply_name = os.path.dirname(os.path.abspath(__file__)) +"/recorder_dataset/fragmentmesh.ply"
             o3d.io.write_triangle_mesh(ply_name,meshModel)
             vis = visualization.Visualizer()
             vis.create_window(width=512, height=512)

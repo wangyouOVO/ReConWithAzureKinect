@@ -1,18 +1,14 @@
 {
     "name": "Open3D",
-    "path_dataset": "/home/wt/open3d_data/extract/mynewdataset",
-    "path_intrinsic": "/home/wt/Projects/ReConWithAzureKinect/config/instrinsic.json",
     "depth_min": 0.05,
-    "depth_max": 0.5,
-    "voxel_size": 0.05,
+    "depth_max": 1.5,
     "depth_diff_max": 0.07,
     "depth_scale": 1000,
     "preference_loop_closure_odometry": 0.1,
     "preference_loop_closure_registration": 5.0,
-    "tsdf_cubic_size": 0.5,
+    "tsdf_cubic_size": 1.5,
     "icp_method": "color",
     "global_registration": "ransac",
-    "python_multi_threading": true ,
     "device_num": 1,
     "preference_loop_closure": true 
 }

@@ -204,7 +204,6 @@ def estimate_3D_transform_RANSAC(pts_xyz_s, pts_xyz_t):
                     if diff_iter < max_distance]
             inlier_vec_good = inlier_vec
             success = True
-
     return success, Transform_good, inlier_vec_good
 
 

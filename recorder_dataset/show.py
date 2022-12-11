@@ -1,5 +1,6 @@
 import open3d as o3d
-filename = "/home/wt/Projects/ReConWithAzureKinect/recorder_dataset/fragmentmesh.ply"
+import os
+filename = os.path.dirname(os.path.abspath(__file__)) +"/fragmentmesh.ply"
 mesh = o3d.io.read_triangle_mesh(filename, False)
 
 vis = o3d.visualization.Visualizer()
