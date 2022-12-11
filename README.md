@@ -69,6 +69,22 @@ pip install open3d
 pip install opencv-python
 ```
 3. use this project
+After configing your env,launch the project by
 ```sh
-....
+python Runsystem.py
 ```
+than, you can press the [space] key to get the RGBD images which will join the reconstruction.After selecting ,press [esc] key, the System will reconstruct automatically. 
+<br/>
+Default mode is One mode,that mean you could use this project with only One device.To change the mode ,you could change the "/config/launchconfig.json" and change "device_num" value.(BUT DONT CHANGE ,BECAUSE I HAVE NOT COMPLETE NOW HAHAHA)
+
+<h4>4. Result</h4> 
+input Images
+<div display="flex">
+ <img src="images/00000.jpg" alt="Logo" width="300" height="200">
+ <img src="images/00001.jpg" alt="Logo" width="300" height="200">
+  <img src="images/00002.jpg" alt="Logo" width="300" height="200">
+</div>
+output mesh
+<div display="flex">
+  <img src="images/mesh.png" alt="Logo" width="400" height="300">
+</div>
